@@ -1,0 +1,53 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ItProduct {
+  availability     Boolean?
+  createdAt        DateTime          @default(now())
+  description      String?
+  id               String            @id @default(cuid())
+  price            Float?
+  productName      String?
+  purchaseRequests PurchaseRequest[]
+  updatedAt        DateTime          @updatedAt
+}
+
+model Employee {
+  createdAt        DateTime          @default(now())
+  email            String?
+  id               String            @id @default(cuid())
+  name             String?
+  position         String?
+  purchaseRequests PurchaseRequest[]
+  updatedAt        DateTime          @updatedAt
+}
+
+model PurchaseRequest {
+  approvals   Approval[]
+  createdAt   DateTime   @default(now())
+  employee    Employee?  @relation(fields: [employeeId], references: [id])
+  employeeId  String?
+  id          String     @id @default(cuid())
+  itProduct   ItProduct? @relation(fields: [itProductId], references: [id])
+  itProductId String?
+  requestDate DateTime?
+  status      String?
+  updatedAt   DateTime   @updatedAt
+}
+
+model Approval {
+  approvalDate      DateTime?
+  approver          String?
+  createdAt         DateTime         @default(now())
+  id                String           @id @default(cuid())
+  purchaseRequest   PurchaseRequest? @relation(fields: [purchaseRequestId], references: [id])
+  purchaseRequestId String?
+  status            String?
+  updatedAt         DateTime         @updatedAt
+}
